@@ -2,18 +2,22 @@
   "name": "demo-react-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://saharanit6288.github.io/reactApp",
+  "homepage": "https://saharanit6288.github.io/SportsUpdater",
   "dependencies": {
+    "axios": "^0.18.0",
+    "moment": "^2.22.1",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
-    "react-scripts": "1.1.4"
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.4",
+    "react-tabs": "^2.2.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-	"predeploy": "npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
   "devDependencies": {
