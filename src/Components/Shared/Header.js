@@ -19,6 +19,9 @@ class Header extends Component {
                         <li class="nav-item">
                             <Link to="/sports-news" class="nav-link">Sports News</Link>
                         </li>
+                        <li class="nav-item">
+                            <Link to="/events" class="nav-link">Events</Link>
+                        </li>
                         <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdownBlog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Updates

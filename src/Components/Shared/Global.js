@@ -7,6 +7,9 @@ class Global {
       this.FootballApiKey= '4abeba83c246625ed6a39107daec6881704ae5f346a1c4ce8e70c59db4859011';
       this.FootballDefaultCountryId= 169;
       this.FootballDefaultLeagueId= 62;
+
+      this.EventBaseUrl= 'https://api.predicthq.com/v1/';
+      this.EventApiToken= 'dUxdfAZkmonf597ln7ouyWL7SziJGU';
     }
   }
   

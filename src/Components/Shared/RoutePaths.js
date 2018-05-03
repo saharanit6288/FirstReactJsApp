@@ -9,6 +9,7 @@ import SportsNews from '../SportsNews';
 import FootballUpdates from '../FootballUpdates';
 import CricketUpdates from '../CricketUpdates';
 import FootballMatchInfo from '../Football/FootballMatchInfo';
+import Events from '../Events/events';
 
 class RoutePaths extends Component {
     render() {
@@ -24,6 +25,7 @@ class RoutePaths extends Component {
                     <Route path="/football/league/:id" component={FootballUpdates}/>
                     <Route path="/football/match/:matchId" component={FootballMatchInfo}/>
                     <Route path="/cricket" component={CricketUpdates}/>
+                    <Route path="/events" component={Events}/>
                 </Switch>
             </div>
         );
