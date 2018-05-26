@@ -20,9 +20,15 @@ class Header extends Component {
                             <Link to="/sports-news" class="nav-link">Sports News</Link>
                         </li>
                         <li class="nav-item">
+                            <Link to="/football-updates" class="nav-link">Football</Link>
+                        </li>
+                        <li class="nav-item">
+                            <Link to="/cricket-updates" class="nav-link">Cricket</Link>
+                        </li>
+                        <li class="nav-item">
                             <Link to="/events" class="nav-link">Events</Link>
                         </li>
-                        <li class="nav-item dropdown">
+                        {/* <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdownBlog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Updates
                         </a>
@@ -30,7 +36,7 @@ class Header extends Component {
                             <Link to="/football" class="dropdown-item">Football</Link>
                             <Link to="/cricket" class="dropdown-item">Cricket</Link>
                         </div>
-                        </li>
+                        </li> */}
                         <li class="nav-item">
                             <Link to="/contact" class="nav-link">Contact</Link>
                         </li>

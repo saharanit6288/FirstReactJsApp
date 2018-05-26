@@ -13,13 +13,18 @@ class Events extends Component {
             eventLocation: 'Kolkata',
             evnts: [],
             places: [],
-            searchText: ''
+            searchText: '',
+            latitude: '',
+            longitude: '',
+            prevLink: '',
+            nextLink: '',
+            buttonLink:''
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleLocationClick = this.handleLocationClick.bind(this);
-
+        this.handlePreviousLink = this.handlePreviousLink.bind(this);
+        this.handleNextLink = this.handleNextLink.bind(this);
     }
 
     handleChange(event) {
@@ -27,42 +32,54 @@ class Events extends Component {
     }
 
     handleSubmit(event) {
-        this.fetchEvents(this.state.searchText);
+        this.fetchPlace(this.state.searchText);
         event.preventDefault();
     }
 
-    handleLocationClick(event_location) {
-        this.fetchEvents(event_location);
+    handleNextLink(url) {
+        this.fetchEventsByUrl(url);
+    }
+
+    handlePreviousLink(url) {
+        this.fetchEventsByUrl(url);
     }
 
     componentDidMount() {
-        
-        this.fetchEvents(this.state.eventLocation);
-        this.fetchPlaces();
+        this.fetchPlace(this.state.eventLocation);
     }
 
-    fetchPlaces() {
-        var urlPath = Global.EventBaseUrl + "places?q=india&type=country";
+    fetchPlace(placeName)
+    {
+        var urlPath = Global.EventBaseUrl + "places?q="+placeName+"&country=IN&limit=1";
         var config = { headers: { Authorization: `Bearer ${Global.EventApiToken}` } };
 
         axios.get(urlPath, config)
-          .then(res => {
-            if(!res.data.error){
-                const places = res.data.results;
-            
-                this.setState({ places });
-              }
-              else{
-                this.setState({ places: [] });
-              }
-          })
-          .catch(error => {
-            this.setState({ places: [] });
-          })
+        .then(res => {
+          if(!res.data.error){
+              const places = res.data.results;
+              this.setState({ 
+                  eventLocation: placeName, 
+                  longitude:places[0].location[0] , 
+                  latitude: places[0].location[1]});
+
+              this.fetchEvents(this.state.latitude, this.state.longitude);
+            }
+            else{
+              this.setState({ longitude: '', latitude: '' });
+            }
+        })
+        .catch(error => {
+          this.setState({ longitude: '', latitude: '' });
+        })
+
     }
 
-    fetchEvents(event_location) {
-        var urlPath = Global.EventBaseUrl + "events/?q="+event_location;
+    fetchEvents(lat,lon) {
+        var radius = '10km';
+        var fromDate = moment().format("YYYY-MM-DD"); 
+        var toDate = moment().add(90, 'days').format("YYYY-MM-DD");
+
+        var urlPath = Global.EventBaseUrl + "events/?within="+radius+"@"+lat+","+lon+"&start.gte="+fromDate+"&start.lte="+toDate+"&limit=9";
         var config = { headers: { Authorization: `Bearer ${Global.EventApiToken}` } };
 
         axios.get(urlPath, config)
@@ -70,7 +87,12 @@ class Events extends Component {
               if(!res.data.error){
                 const evnts = res.data.results;
                 
-                this.setState({ evnts, eventLocation: event_location});
+                this.setState({ 
+                    evnts,
+                    prevLink: res.data.previous,
+                    nextLink: res.data.next
+                });
+                
               }
               else{
                 this.setState({ evnts: [] });
@@ -82,7 +104,33 @@ class Events extends Component {
           
     }
 
+    fetchEventsByUrl(url)
+    {
+        var urlPath = url;
+        var config = { headers: { Authorization: `Bearer ${Global.EventApiToken}` } };
 
+        axios.get(urlPath, config)
+          .then(res => {
+              if(!res.data.error){
+                const evnts = res.data.results;
+                
+                this.setState({ 
+                    evnts,
+                    prevLink: res.data.previous,
+                    nextLink: res.data.next
+                });
+                
+              }
+              else{
+                this.setState({ evnts: [] });
+              }
+          })
+          .catch(error => {
+            this.setState({ evnts: [] });
+          })
+    }
+
+    
     render() {
       return (
         <div class="container">
@@ -97,12 +145,11 @@ class Events extends Component {
             </li>
             <li class="breadcrumb-item active">Events</li>
             </ol>
-    
-            <div class="row">
-                <div class="col-lg-4">
 
-                    <div class="card mb-4">
-                    <h5 class="card-header">Search Location</h5>
+            <div class="col-lg-4">
+
+                <div class="card mb-4">
+                    <h5 class="card-header">Search Place</h5>
                     <div class="card-body">
                     <form onSubmit={this.handleSubmit}>
                         <div class="input-group">
@@ -113,40 +160,16 @@ class Events extends Component {
                         </div>
                     </form>
                     </div>
-                    </div>
-
-                    <div class="card my-4">
-                    <h5 class="card-header">Places</h5>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <ul class="list-unstyled mb-0">
-                                {
-                                    this.state.places.map(function(place, i){
-                                        return (  
-                                            <li key={i} onClick={this.handleLocationClick.bind(this, place.name)}>
-                                                <a href="javascript:void(0)">
-                                                    {place.name} - {place.country}
-                                                </a>
-                                            </li>
-                                        )
-                                    }, this)
-                                }
-                                </ul>
-                            </div>                          
-                        
-                        </div>
-                    </div>
-                    </div>
-
-
                 </div>
-                        
-                {
-                    this.state.evnts.map(function(evnt, i){
-                        return ( 
-                            <div class="col-lg-4 mb-4" key={i}>
-                                <div class="card h-100">
+
+            </div>
+
+            <div class="row">
+            {
+                this.state.evnts.map(function(evnt, i){
+                    return ( 
+                        <div class="col-lg-4 mb-4" key={i}>
+                            <div class="card h-100">
                                 <h4 class="card-header">{evnt.title}</h4>
                                 <div class="card-body">
                                     <p class="card-text">
@@ -158,13 +181,22 @@ class Events extends Component {
                                     &nbsp;-&nbsp;
                                     {moment(evnt.end).format("DD/MM/YYYY, h:mm:ss a")}
                                 </div>
-                                </div>
                             </div>
-                        )
-                    })
-                }
+                        </div>
+                    )
+                })
+            }
             </div>
-    
+            {
+                this.state.prevLink !== null &&
+                <button class="btn btn-primary" onClick={() => { this.handlePreviousLink(this.state.prevLink)}}>Previous</button>
+            }
+            &nbsp;
+            {
+                this.state.nextLink !== null &&
+                <button class="btn btn-primary" onClick={() => { this.handleNextLink(this.state.nextLink)}}>Next</button>
+            }
+            <br /><br />
         </div>        
       );
     }
